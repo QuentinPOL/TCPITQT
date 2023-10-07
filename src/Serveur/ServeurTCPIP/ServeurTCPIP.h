@@ -2,8 +2,10 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_ServeurTCPIP.h"
+#include <QDebug>
 #include <QTcpSocket>
 #include <QTcpServer>
+#include "time.h"
 
 // Classe IHM
 class ServeurTCPIP : public QMainWindow
