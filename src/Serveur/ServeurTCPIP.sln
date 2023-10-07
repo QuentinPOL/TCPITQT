@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServeurTCPIP", "ServeurTCPIP\ServeurTCPIP.vcxproj", "{CE3C83AC-F0CE-40A7-BF63-0CA3397ABCAC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE3C83AC-F0CE-40A7-BF63-0CA3397ABCAC}.Debug|x64.ActiveCfg = Debug|x64
+		{CE3C83AC-F0CE-40A7-BF63-0CA3397ABCAC}.Debug|x64.Build.0 = Debug|x64
+		{CE3C83AC-F0CE-40A7-BF63-0CA3397ABCAC}.Release|x64.ActiveCfg = Release|x64
+		{CE3C83AC-F0CE-40A7-BF63-0CA3397ABCAC}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D2E9895-AB59-414C-A48D-F313493FBC11}
+	EndGlobalSection
+EndGlobal
