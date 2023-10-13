@@ -1,11 +1,11 @@
-#include "ClientTCPIP.h"
+ï»¿#include "ClientTCPIP.h"
 
 // Constructeur IHM
 ClientTCPIP::ClientTCPIP(QWidget *parent) : QMainWindow(parent)
 {
     ui.setupUi(this);
 
-    // Rendre invisible et désactiver les boutons tant que la connexion n'est pas établie
+    // Rendre invisible et dÃ©sactiver les boutons tant que la connexion n'est pas Ã©tablie
     ui.pushBtnCelsius->setVisible(false);
     ui.pushBtnCelsius->setEnabled(false);
 
@@ -14,6 +14,13 @@ ClientTCPIP::ClientTCPIP(QWidget *parent) : QMainWindow(parent)
 
     ui.pushBtnHygrometie->setVisible(false);
     ui.pushBtnHygrometie->setEnabled(false);
+
+    // Rendre invisible le champ et le label du numÃ©ro du capteur
+    ui.numcapteur->setVisible(false);
+    ui.numcapteur->setEnabled(false);
+
+    ui.labelCapteur->setVisible(false);
+    ui.labelCapteur->setEnabled(false);
 
     socketClient = new QTcpSocket(this); // Inialisation du socket client pour notre interface (IHM)
     QObject::connect(socketClient, SIGNAL(connected()), this, SLOT(onSocketConnected())); // On connecte nos signaux et slots avec le signal connected
@@ -25,24 +32,24 @@ ClientTCPIP::ClientTCPIP(QWidget *parent) : QMainWindow(parent)
 ClientTCPIP::~ClientTCPIP()
 {
     socketClient->close(); // On ferme la connexion
-    delete socketClient; // On Supprime pour la mémoire
+    delete socketClient; // On Supprime pour la mÃ©moire
 }
 
-// Méthode du slot lors du clic sur le bouton de connexion
+// MÃ©thode du slot lors du clic sur le bouton de connexion
 void ClientTCPIP::onConnectButtonClicked()
 {
-    // On récupère ce qui a été saisi
+    // On rÃ©cupÃ¨re ce qui a Ã©tÃ© saisi
     QString ip = ui.lineEditIP->text();
     QString port = ui.lineEditPort->text();
 
-    // Vérifier si les champs ne sont pas pas vide
+    // VÃ©rifier si les champs ne sont pas pas vide
     if (!ip.isEmpty() && !port.isEmpty())
     {
         // On converti le port de String en int
         bool ok;
         int portAsInt = port.toInt(&ok);
 
-        if (ok) // Si la conversion est réussie
+        if (ok) // Si la conversion est rÃ©ussie
         {
             // On va essayer de se connecter au serveur
             socketClient->connectToHost(ip, portAsInt);
@@ -55,10 +62,10 @@ void ClientTCPIP::onConnectButtonClicked()
     }
 }
 
-// Méthode du slot lorsque le signal connected est émis par socketClient
+// MÃ©thode du slot lorsque le signal connected est Ã©mis par socketClient
 void ClientTCPIP::onSocketConnected()
 {
-    ui.labelStatus->setText("Status connexion : Connecté");
+    ui.labelStatus->setText("Status connexion : ConnectÃ©");
 
     // Rendre visible et activer les boutons et effacer le texte d'erreur
     ui.pushBtnCelsius->setVisible(true);
@@ -72,27 +79,35 @@ void ClientTCPIP::onSocketConnected()
 
     ui.label_error->setText("");
 
-    // désactiver et cacher le bouton connexion
+    // dÃ©sactiver et cacher le bouton connexion
     ui.pushBtnConnect->setEnabled(false);
     ui.pushBtnConnect->setVisible(false);
 
-    // désactiver les labels ip et port
+    // dÃ©sactiver les labels ip et port
     ui.labelIP->setVisible(false);
     ui.labelPort->setVisible(false);
 
-    // désactiver et cacher les champs de saisi ip et port
+    // dÃ©sactiver et cacher les champs de saisi ip et port
     ui.lineEditIP->setEnabled(false);
     ui.lineEditIP->setVisible(false);
     ui.lineEditPort->setEnabled(false);
     ui.lineEditPort->setVisible(false);
+
+    // Rendre visible le champ du numÃ©ro et du label du capteur
+    ui.numcapteur->setVisible(true);
+    ui.numcapteur->setEnabled(true);
+
+    ui.labelCapteur->setVisible(true);
+    ui.labelCapteur->setEnabled(true);
+ 
 }
 
-// Méthode du slot lorsque le signal disconnected est émis par socketClient
+// MÃ©thode du slot lorsque le signal disconnected est Ã©mis par socketClient
 void ClientTCPIP::onSocketDisconnected()
 {
-    ui.labelStatus->setText("Status connexion : Déconnecté");
+    ui.labelStatus->setText("Status connexion : DÃ©connectÃ©");
 
-    // Rendre invisible et désactiver les boutons tant que la connexion n'est plus établie
+    // Rendre invisible et dÃ©sactiver les boutons tant que la connexion n'est plus Ã©tablie
     ui.pushBtnCelsius->setVisible(false);
     ui.pushBtnCelsius->setEnabled(false);
 
@@ -115,22 +130,98 @@ void ClientTCPIP::onSocketDisconnected()
     ui.lineEditIP->setVisible(true);
     ui.lineEditPort->setEnabled(true);
     ui.lineEditPort->setVisible(true);
+
+    // Rendre invisible le champ et le label du numÃ©ro du capteur
+    ui.numcapteur->setVisible(false);
+    ui.numcapteur->setEnabled(false);
+
+    ui.labelCapteur->setVisible(false);
+    ui.labelCapteur->setEnabled(false);
 }
 
-// Méthode du slot lors du clic sur le bouton d'envoie de message au serveur
+// MÃ©thode du slot lors du clic sur le bouton d'envoie de message au serveur
 void ClientTCPIP::onSendMessageButtonClicked()
 {
-    if (socketClient->state() == QTcpSocket::ConnectedState) // Si le socket est bien connecté
+    if (socketClient->state() == QTcpSocket::ConnectedState) // Si le socket est bien connectÃ©
     {
         socketClient->write("TEST1234\n"); // On envoie le message au serveur
     }
 }
 
-// Méthode du slot lorsque le signal readyRead est émis par socketClient
+// MÃ©thode du slot lorsque le signal readyRead est Ã©mis par socketClient
 void ClientTCPIP::onSocketReadyRead()
 {
-    QByteArray data = socketClient->read(socketClient->bytesAvailable()); // On va lire les données reçu
-    QString str(data); // On converti nos données en une chaine de caractère
+    QByteArray data = socketClient->read(socketClient->bytesAvailable()); // On va lire les donnÃ©es reÃ§u
+    QString str(data); // On converti nos donnÃ©es en une chaine de caractÃ¨re
 
-    ui.labelStatus->setText("Message reçu du serveur : " + str); // On affiche les données reçu
+    ui.labelStatus->setText("Message du serveur : Capteur " + str ); // On affiche les donnÃ©es reÃ§u
+}
+
+// MÃ©thode du slot quand on demande la tempÃ©rature en Celsius
+void ClientTCPIP::onSendCelsiusButtonClicked()
+{
+    // On rÃ©cupÃ¨re la valeur de la spinbox
+    int numcapteur = ui.numcapteur->value();
+
+    QString requestServer;
+
+    if (numcapteur < 10) // Si le numÃ©ro ne dÃ©passe pas 10
+    {
+        requestServer = "Td0" + QString::number(numcapteur) + "?"; // On rajoute un 0 devant
+    }
+    else
+    {
+        requestServer = "Td" + QString::number(numcapteur) + "?";
+    }
+
+    if (socketClient->state() == QTcpSocket::ConnectedState) // Si le socket est bien connectÃ©
+    {
+        socketClient->write(requestServer.toUtf8()); // On envoie le message au serveur
+    }
+}
+
+// MÃ©thode du slot lorsque l'on demande une tempÃ©rature en Farenheit
+void ClientTCPIP::onSendFarhenheitButtonClicked()
+{
+    // On rÃ©cupÃ¨re la valeur de la spinbox
+    int numcapteur = ui.numcapteur->value();
+
+    QString requestServer;
+
+    if (numcapteur < 10) // Si le numÃ©ro ne dÃ©passe pas 10
+    {
+        requestServer = "Tf0" + QString::number(numcapteur) + "?"; // On rajoute un 0 devant
+    }
+    else
+    {
+        requestServer = "Tf" + QString::number(numcapteur) + "?";
+    }
+
+    if (socketClient->state() == QTcpSocket::ConnectedState) // Si le socket est bien connectÃ©
+    {
+        socketClient->write(requestServer.toUtf8()); // On envoie le message au serveur
+    }
+}
+
+// MÃ©thode du slot quand on demande une valeur Hygrometrie
+void ClientTCPIP::onSendHygrometrieButtonClicked()
+{
+    // On rÃ©cupÃ¨re la valeur de la spinbox
+    int numcapteur = ui.numcapteur->value();
+
+    QString requestServer;
+
+    if (numcapteur < 10) // Si le numÃ©ro ne dÃ©passe pas 10
+    {
+        requestServer = "Hr0" + QString::number(numcapteur) + "?"; // On rajoute un 0 devant
+    }
+    else
+    {
+        requestServer = "Hr" + QString::number(numcapteur) + "?";
+    }
+
+    if (socketClient->state() == QTcpSocket::ConnectedState) // Si le socket est bien connectÃ©
+    {
+        socketClient->write(requestServer.toUtf8()); // On envoie le message au serveur
+    }
 }

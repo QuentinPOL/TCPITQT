@@ -23,4 +23,7 @@ public slots:
     void onSocketDisconnected(); // socketClient signal déconnecter
     void onSendMessageButtonClicked(); // Clic Bouton d'envoie de message
     void onSocketReadyRead(); // socketClient signal readyRead
+    void onSendCelsiusButtonClicked(); // Demande Celsius Button
+    void onSendFarhenheitButtonClicked(); // Demande Farheneit Button
+    void onSendHygrometrieButtonClicked(); // Demande Hygrometrie Button
 };
