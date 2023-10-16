@@ -65,7 +65,7 @@ void ClientTCPIP::onConnectButtonClicked()
 // Méthode du slot lorsque le signal connected est émis par socketClient
 void ClientTCPIP::onSocketConnected()
 {
-    ui.labelStatus->setText("Status connexion : Connecté");
+    ui.labelStatus->setText("Status connexion : Connecter");
 
     // Rendre visible et activer les boutons et effacer le texte d'erreur
     ui.pushBtnCelsius->setVisible(true);
@@ -105,7 +105,7 @@ void ClientTCPIP::onSocketConnected()
 // Méthode du slot lorsque le signal disconnected est émis par socketClient
 void ClientTCPIP::onSocketDisconnected()
 {
-    ui.labelStatus->setText("Status connexion : Déconnecté");
+    ui.labelStatus->setText("Status connexion : Déconnecter");
 
     // Rendre invisible et désactiver les boutons tant que la connexion n'est plus établie
     ui.pushBtnCelsius->setVisible(false);
@@ -139,22 +139,28 @@ void ClientTCPIP::onSocketDisconnected()
     ui.labelCapteur->setEnabled(false);
 }
 
-// Méthode du slot lors du clic sur le bouton d'envoie de message au serveur
-void ClientTCPIP::onSendMessageButtonClicked()
-{
-    if (socketClient->state() == QTcpSocket::ConnectedState) // Si le socket est bien connecté
-    {
-        socketClient->write("TEST1234\n"); // On envoie le message au serveur
-    }
-}
-
 // Méthode du slot lorsque le signal readyRead est émis par socketClient
 void ClientTCPIP::onSocketReadyRead()
 {
     QByteArray data = socketClient->read(socketClient->bytesAvailable()); // On va lire les données reçu
     QString str(data); // On converti nos données en une chaine de caractère
 
-    ui.labelStatus->setText("Message du serveur : Capteur " + str ); // On affiche les données reçu
+	if (str.left(2) == "Td")
+	{
+		ui.labelStatus->setText("Message du serveur : " + str.right(6) + " Capteur " + str.mid(2, 1) + str.mid(3, 1)); // On affiche les données reçu
+	}
+	else if (str.left(2) == "Tf")
+	{
+		ui.labelStatus->setText("Message du serveur : " + str.right(6) + " Capteur " + str.mid(2, 1) + str.mid(3, 1)); // On affiche les données
+	}
+	else if (str.left(2) == "Hr")
+	{
+		ui.labelStatus->setText("Message du serveur : " + str.right(5) + " Capteur " + str.mid(2, 1) + str.mid(3, 1)); // On affiche les données
+	}
+	else
+	{
+		ui.labelStatus->setText("Message du serveur : " + str + " Capteur "); // On affiche les données reçu
+	}
 }
 
 // Méthode du slot quand on demande la température en Celsius
