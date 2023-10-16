@@ -105,7 +105,7 @@ void ClientTCPIP::onSocketConnected()
 // Méthode du slot lorsque le signal disconnected est émis par socketClient
 void ClientTCPIP::onSocketDisconnected()
 {
-    ui.labelStatus->setText("Status connexion : Déconnecter");
+    ui.labelStatus->setText("Status connexion : Deconnecter");
 
     // Rendre invisible et désactiver les boutons tant que la connexion n'est plus établie
     ui.pushBtnCelsius->setVisible(false);
@@ -147,15 +147,15 @@ void ClientTCPIP::onSocketReadyRead()
 
 	if (str.left(2) == "Td")
 	{
-		ui.labelStatus->setText("Message du serveur : " + str.right(6) + " Capteur " + str.mid(2, 1) + str.mid(3, 1)); // On affiche les données reçu
+		ui.labelStatus->setText("Message du serveur : " + str.right(6) + "C (Celsius) " + " Capteur " + str.mid(2, 1) + str.mid(3, 1)); // On affiche les données reçu
 	}
 	else if (str.left(2) == "Tf")
 	{
-		ui.labelStatus->setText("Message du serveur : " + str.right(6) + " Capteur " + str.mid(2, 1) + str.mid(3, 1)); // On affiche les données
+		ui.labelStatus->setText("Message du serveur : " + str.right(6) + "F (Farenheit) " + " Capteur " + str.mid(2, 1) + str.mid(3, 1)); // On affiche les données
 	}
 	else if (str.left(2) == "Hr")
 	{
-		ui.labelStatus->setText("Message du serveur : " + str.right(5) + " Capteur " + str.mid(2, 1) + str.mid(3, 1)); // On affiche les données
+		ui.labelStatus->setText("Message du serveur : " + str.right(5) + "% (Hygrometrie) Capteur " + str.mid(2, 1) + str.mid(3, 1)); // On affiche les données
 	}
 	else
 	{

@@ -1,4 +1,6 @@
-#include "ServeurTCPIP.h"
+ï»¿#include "ServeurTCPIP.h"
+
+#include <iostream>
 
 // Constructeur 
 ServeurTCPIP::ServeurTCPIP(QObject *parent) : QObject(parent)
@@ -6,7 +8,7 @@ ServeurTCPIP::ServeurTCPIP(QObject *parent) : QObject(parent)
 	socketServer = new QTcpServer(this); // Inialisation du socket server pour notre interface (IHM)
 	connect(socketServer, SIGNAL(newConnection()), this, SLOT(onServerNewConnection())); // On connecte nos signaux et slots avec le signal newConnection
 
-	// On ouvre le serveur sur n'importe quelle adresse ipv4 (127.0.0.1 ou ip sur le réseaux) et sur le port 1234s
+	// On ouvre le serveur sur n'importe quelle adresse ipv4 (127.0.0.1 ou ip sur le rÃ©seaux) et sur le port 1234s
 	if (socketServer->listen(QHostAddress::AnyIPv4, 1234))
 	{
 		qDebug() << "Ouverture du serveur sur le port 1234";
@@ -21,13 +23,13 @@ ServeurTCPIP::ServeurTCPIP(QObject *parent) : QObject(parent)
 ServeurTCPIP::~ServeurTCPIP()
 {
 	socketServer->close(); // On ferme la connexion
-	delete socketServer; // On Supprime pour la mémoire
+	delete socketServer; // On Supprime pour la mÃ©moire
 }
 
-// Méthode du slot lorsque le signal newConnection est émis par socketServer
+// MÃ©thode du slot lorsque le signal newConnection est Ã©mis par socketServer
 void ServeurTCPIP::onServerNewConnection()
 {
-	QTcpSocket* client = socketServer->nextPendingConnection(); // On récupère le client
+	QTcpSocket* client = socketServer->nextPendingConnection(); // On rÃ©cupÃ¨re le client
 
 	qDebug() << "Un client s'est connecter : " << client->peerAddress();
 
@@ -35,45 +37,57 @@ void ServeurTCPIP::onServerNewConnection()
 	connect(client, SIGNAL(disconnected()), this, SLOT(onClientDisconnected())); // On connecte les signaux et slots du client avec le signal disconnected
 }
 
-// Méthode du slot lorsque le signal disconnected est émis par client
+// MÃ©thode du slot lorsque le signal disconnected est Ã©mis par client
 void ServeurTCPIP::onClientDisconnected()
 {
-	QTcpSocket* client = qobject_cast<QTcpSocket*>(sender()); // On va récupèrer l'objet qui nous un envoyé le signal (conversion car on reçoie QObject* et il nous faut QTcpSocket*)
+	QTcpSocket* client = qobject_cast<QTcpSocket*>(sender()); // On va rÃ©cupÃ¨rer l'objet qui nous un envoyÃ© le signal (conversion car on reÃ§oie QObject* et il nous faut QTcpSocket*)
 
 	qDebug() << "Un client s'est deconnecter : " << client->peerAddress();
 
-	disconnect(client, SIGNAL(readyRead()), this, SLOT(onClientReadyRead())); // On déconnecte les signaux et slots du client avec le signal readyRead
-	disconnect(client, SIGNAL(disconnected()), this, SLOT(onClientDisconnected())); // On déconnecte les signaux et slots du client avec le signal disconnected
+	disconnect(client, SIGNAL(readyRead()), this, SLOT(onClientReadyRead())); // On dÃ©connecte les signaux et slots du client avec le signal readyRead
+	disconnect(client, SIGNAL(disconnected()), this, SLOT(onClientDisconnected())); // On dÃ©connecte les signaux et slots du client avec le signal disconnected
 
-	client->deleteLater(); // Suppresion de l'object pour libérer la mémoire
+	client->deleteLater(); // Suppresion de l'object pour libÃ©rer la mÃ©moire
 }
 
-// Méthode du slot lorsque le signal readyRead est émis par client
+// MÃ©thode du slot lorsque le signal readyRead est Ã©mis par client
 void ServeurTCPIP::onClientReadyRead()
 {
-	QTcpSocket* obj = qobject_cast<QTcpSocket*>(sender()); // On va récupèrer l'objet qui nous un envoyé le signal (conversion car on reçoie QObject* et il nous faut QTcpSocket*)
+	QTcpSocket* obj = qobject_cast<QTcpSocket*>(sender()); // On va rÃ©cupÃ¨rer l'objet qui nous un envoyÃ© le signal (conversion car on reÃ§oie QObject* et il nous faut QTcpSocket*)
 
-	QByteArray data = obj->read(obj->bytesAvailable()); // On va lire les données reçu
-	QString str(data); // On converti nos données en une chaine de caractère
+	QByteArray data = obj->read(obj->bytesAvailable()); // On va lire les donnÃ©es reÃ§u
+	QString str(data); // On converti nos donnÃ©es en une chaine de caractÃ¨re
 
-	// On va convertir les deux caractères après "Td" ou "Tf" ou "Hr" pour savoir si ce sont des entiers
+	// On va convertir les deux caractÃ¨res aprÃ¨s "Td" ou "Tf" ou "Hr" pour savoir si ce sont des entiers
 	bool isInt, isInt2;
 	int int1 = str.mid(2, 1).toInt(&isInt);
 	int int2 = str.mid(3, 1).toInt(&isInt2);
 
 	QString strNumber;
+	const char* tempFormat;
 
-	float randomTemp = 00.00; // Création de la température
+	float randomTemp = 00.00; // CrÃ©ation de la tempÃ©rature
 
-	if (str.left(2) == "Td" && isInt && isInt2) // Si c'est une demande de température en °C
+	if (str.left(2) == "Td" && isInt && isInt2) // Si c'est une demande de tempÃ©rature en Â°C
 	{
 		qDebug() << "Demande du client : " << str << " [" << obj->peerAddress() << "]";
 
-		randomTemp = (-20.00) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (37.00 - (-20.00)))); // Numéro random entre [-20.00°C;35.00°C] 
+		randomTemp = (-20.00) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (37.00 - (-20.00)))); // NumÃ©ro random entre [-20.00Â°C;35.00Â°C] 
 
 		if (randomTemp < 10 || randomTemp < -10)
 		{
-			strNumber = "0" + QString::number(randomTemp, 'f', 2);
+			if (randomTemp >= 0) {
+				tempFormat = "+%05.2f";
+			}
+			else if (randomTemp >= -10) {
+				tempFormat = "%06.2f"; // Correction ici
+			}
+			else {
+				tempFormat = "%06.2f";
+			}
+
+			strNumber = QString::asprintf(tempFormat, randomTemp);
+			qDebug() << strNumber;
 		}
 		else
 		{
@@ -82,22 +96,33 @@ void ServeurTCPIP::onClientReadyRead()
 
 		if (randomTemp > 0)
 		{
-			str = "Td" + QString::number(int1) + QString::number(int2) + ",+" + QString::number(randomTemp, 'f', 2); // On fait la réponse et on met une précision de 2 chiffres derrière la virgule pour un float
+			str = "Td" + QString::number(int1) + QString::number(int2) + ",+" + strNumber; // On fait la rÃ©ponse et on met une prÃ©cision de 2 chiffres derriÃ¨re la virgule pour un float
 		}
 		else
 		{
-			str = "Td" + QString::number(int1) + QString::number(int2) + "," + QString::number(randomTemp, 'f', 2); // On fait la réponse et on met une précision de 2 chiffres derrière la virgule pour un float
+			str = "Td" + QString::number(int1) + QString::number(int2) + "," + strNumber; // On fait la rÃ©ponse et on met une prÃ©cision de 2 chiffres derriÃ¨re la virgule pour un float
 		}
 	}
-	else if (str.left(2) == "Tf" && isInt && isInt2) // Si c'est une demande de température en °F
+	else if (str.left(2) == "Tf" && isInt && isInt2) // Si c'est une demande de tempÃ©rature en Â°F
 	{
 		qDebug() << "Demande du client : " << str << " [" << obj->peerAddress() << "]";
 
-		randomTemp = (-04.00) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (95.00 - (-04.00)))); // Numéro random entre [-20.00°C;35.00°C] -> [-04.00°F;95.00°F]
+		randomTemp = (-04.00) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (98.60 - (-04.00)))); // NumÃ©ro random entre [-20.00Â°C;35.00Â°C] -> [-04.00Â°F;95.00Â°F]
 
 		if (randomTemp < 10 || randomTemp < -10)
 		{
-			strNumber = "0" + QString::number(randomTemp, 'f', 2);
+			if (randomTemp >= 0) {
+				tempFormat = "+%05.2f";
+			}
+			else if (randomTemp >= -10) {
+				tempFormat = "%06.2f"; // Correction ici
+			}
+			else {
+				tempFormat = "%06.2f";
+			}
+
+			strNumber = QString::asprintf(tempFormat, randomTemp);
+			qDebug() << strNumber;
 		}
 		else
 		{
@@ -106,36 +131,27 @@ void ServeurTCPIP::onClientReadyRead()
 
 		if (randomTemp > 0)
 		{
-			str = "Tf" + QString::number(int1) + QString::number(int2) + ",+" + strNumber; // On fait la réponse et on met une précision de 2 chiffres derrière la virgule pour un float
+			str = "Tf" + QString::number(int1) + QString::number(int2) + ",+" + strNumber; // On fait la rÃ©ponse et on met une prÃ©cision de 2 chiffres derriÃ¨re la virgule pour un float
 		}
 		else
 		{
-			str = "Tf" + QString::number(int1) + QString::number(int2) + "," + strNumber; // On fait la réponse et on met une précision de 2 chiffres derrière la virgule pour un float
+			str = "Tf" + QString::number(int1) + QString::number(int2) + "," + strNumber; // On fait la rÃ©ponse et on met une prÃ©cision de 2 chiffres derriÃ¨re la virgule pour un float
 		}
 	}
-	else if (str.left(2) == "Hr" && isInt && isInt2) // Si c'est une demande d'hygrométrie en % 
+	else if (str.left(2) == "Hr" && isInt && isInt2) // Si c'est une demande d'hygromÃ©trie en % 
 	{
 		qDebug() << "Demande du client : " << str << " [" << obj->peerAddress() << "]";
 
-		randomTemp = (00.00) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (99.99 - (00.00)))); // Numéro random entre [00.00%;99.99%]
+		randomTemp = (00.00) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (99.99 - (00.00)))); // NumÃ©ro random entre [00.00%;99.99%]
 
-		if (randomTemp < 10)
-		{
-			strNumber = "0" + QString::number(randomTemp, 'f', 2);
-		}
-		else
-		{
-			strNumber = QString::number(randomTemp, 'f', 2);
-		}
-
-		str = "Hr" + QString::number(int1) + QString::number(int2) + "," + strNumber; // On fait la réponse et on met une précision de 2 chiffre1 derrière la virgule pour un float
+		str = "Hr" + QString::number(int1) + QString::number(int2) + "," + QString::number(randomTemp, 'f', 2); // On fait la rÃ©ponse et on met une prÃ©cision de 2 chiffre1 derriÃ¨re la virgule pour un float
 	}
 
 	// Reconversion de la QString en QByteArray pour l'envoie du message
 	data = str.toUtf8();
 
-	if (obj->state() == QTcpSocket::ConnectedState) // Si le client est bien connecté
+	if (obj->state() == QTcpSocket::ConnectedState) // Si le client est bien connectÃ©
 	{
-		obj->write(data); // on lui  renvoie un message en réponse
+		obj->write(data); // on lui  renvoie un message en rÃ©ponse
 	}
 }
