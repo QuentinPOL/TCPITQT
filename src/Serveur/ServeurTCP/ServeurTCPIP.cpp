@@ -72,10 +72,11 @@ void ServeurTCPIP::onClientReadyRead()
 	{
 		qDebug() << "Demande du client : " << str << " [" << obj->peerAddress() << "]";
 
-		randomTemp = (-20.00) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (37.00 - (-20.00)))); // Numéro random entre [-20.00°C;35.00°C] 
+		randomTemp = (-20.00) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (37.00 - (-20.00)))); // Numéro random entre [-20.00°C;37.00°C] 
 
 		if (randomTemp < 10 || randomTemp < -10)
 		{
+			// Gérer l'affichage pour rajouter un zero devant le + ou le -
 			if (randomTemp >= 0) {
 				tempFormat = "+%05.2f";
 			}
@@ -107,7 +108,7 @@ void ServeurTCPIP::onClientReadyRead()
 	{
 		qDebug() << "Demande du client : " << str << " [" << obj->peerAddress() << "]";
 
-		randomTemp = (-04.00) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (98.60 - (-04.00)))); // Numéro random entre [-20.00°C;35.00°C] -> [-04.00°F;95.00°F]
+		randomTemp = (-04.00) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (98.60 - (-04.00)))); // Numéro random entre [-20.00°C;35.00°C] -> [-04.00°F;98.60°F]
 
 		if (randomTemp < 10 || randomTemp < -10)
 		{
